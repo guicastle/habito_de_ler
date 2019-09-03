@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "479527884210",
+    "firebase_url": "https://habito-de-ler.firebaseio.com",
+    "project_id": "habito-de-ler",
+    "storage_bucket": "habito-de-ler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479527884210:android:ba15a2f9e972fca5",
+        "android_client_info": {
+          "package_name": "com.example.habito_de_ler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479527884210-n1rs2fii8hcf7sbqdkul896knci9r3fi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.habito_de_ler",
+            "certificate_hash": "59efa1aa426566eda1fd036c6571286527f78e0a"
+          }
+        },
+        {
+          "client_id": "479527884210-44at4t10jvhb4q3edp4p8trvjfkhhmev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeFuPvQIKDsR8JE24tkJQTrpBnH5AArEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479527884210-44at4t10jvhb4q3edp4p8trvjfkhhmev.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
