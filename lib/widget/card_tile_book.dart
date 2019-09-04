@@ -1,0 +1,32 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:habito_de_ler/utils/space_utils.dart';
+import 'package:habito_de_ler/widget/star_display.dart';
+
+Widget buildCardTileBook(
+    String picture, String title, String author, int averageRating) {
+  return ListTile(
+    contentPadding: EdgeInsets.all(18),
+    leading: CachedNetworkImage(
+      imageUrl: picture,
+      fit: BoxFit.cover,
+    ),
+    title: Text(title),
+    subtitle: Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(author),
+          SpaceUtils.column(8),
+          IconTheme(
+            data: IconThemeData(color: Colors.amber, size: 12),
+            child: StarDisplay(
+              value: averageRating,
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}

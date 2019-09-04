@@ -1,6 +1,9 @@
 import 'package:ant_icons/ant_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:habito_de_ler/utils/colors.dart';
+import 'package:habito_de_ler/utils/space_utils.dart';
+
+import '../search_book_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,11 +13,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Color(0xff303030),
-      ),
       body: Container(
         child: Column(
           children: <Widget>[],
@@ -22,7 +23,10 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.grey[700],
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SearchBookPage()));
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,
