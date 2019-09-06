@@ -1,7 +1,6 @@
 import 'package:ant_icons/ant_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:habito_de_ler/model/book_google.dart';
-import 'package:habito_de_ler/utils/behaviors_utils.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
 import 'package:habito_de_ler/application/constants.dart';
 import 'package:habito_de_ler/utils/string_format.dart';
@@ -15,56 +14,24 @@ class SearchBookPage extends StatefulWidget {
 }
 
 class _SearchBookPageState extends State<SearchBookPage> {
+  List<Items> items = new List<Items>();
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
 
-    List<Widget> cardsBooks = [];
     return Scaffold(
-      body: Container(
+      body: Center(
         child: Column(
           children: <Widget>[
-            SpaceUtils.column(height * 0.06),
+            SpaceUtils.column(44),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.only(left: 18, right: 18),
               child: TextField(
                 onSubmitted: (value) async {
-                  String searchValue = "";
-                  var list = value.split(" ");
-                  for (int i = 0; i < list.length; i++) {
-                    if (i != list.length - 1) {
-                      searchValue += StringFormat.removeDiacritics(list[i]) +
-                          "+" +
-                          StringFormat.removeDiacritics(list[i + 1]);
-                    }
-                  }
-                  String url =
-                      '${Constants.URL_GOOGLE_BOOKS_API}${Constants.API_KEY}&q=$searchValue';
-
-                  var response = await http.get(url);
-                  if (response.statusCode == 200) {
-                    var jsonResponse = convert.jsonDecode(response.body);
-                    BookGoogle bookGoogle = BookGoogle.fromJson(jsonResponse);
-
-                    for (final item in bookGoogle.items) {
-                      String picture = item.volumeInfo.imageLinks != null
-                          ? item.volumeInfo.imageLinks.thumbnail.toString()
-                          : 'https://historyexplorer.si.edu/sites/default/files/book-158.jpg';
-                      String title = item.volumeInfo.title != null
-                          ? item.volumeInfo.title
-                          : '';
-                      String author = item.volumeInfo.description != null
-                          ? item.volumeInfo.authors[0]
-                          : '';
-                      //int averageRating = item.volumeInfo.averageRating.toInt();
-
-                      setState(() {
-                        cardsBooks.add(
-                            buildCardTileBook(picture, title, author, 5));
-                      });
-                      print(cardsBooks);
-                    }
-                  } else {}
+                  items.clear();
+                  await getBookGoogle(value);
+                  setState(() {});
                 },
                 decoration: InputDecoration(
                   hintText: 'Busca o livro (Titulo/Author)',
@@ -72,14 +39,50 @@ class _SearchBookPageState extends State<SearchBookPage> {
                 ),
               ),
             ),
-            buildCardTileBook("http://statics.livrariacultura.net.br/products/capas_lg/365/30351365.jpg", "O Poder do Hábito", "Charles Duhigg", 4),
-            buildCardTileBook("http://statics.livrariacultura.net.br/products/capas_lg/786/1495786.jpg", "Os Segredos da Mente Milionária", "T. Harv Eker", 5),
-//            ListView(
-//              children: cardsBooks,
-//            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  String imageUrl =
+                      '${items[index].volumeInfo.imageLinks != null ? items[index].volumeInfo.imageLinks.thumbnail : 'https://historyexplorer.si.edu/sites/default/files/book-158.jpg'}';
+                  String title = '${items[index].volumeInfo.title}';
+                  String author =
+                      '${items[index].volumeInfo.authors != null ? items[index].volumeInfo.authors[0] : '-'}';
+                  int averageRating =
+                      items[index].volumeInfo.averageRating != null
+                          ? items[index].volumeInfo.averageRating.toInt()
+                          : 0;
+
+                  return buildCardTileBook(imageUrl, title, author, averageRating);
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  getBookGoogle(String value) async {
+    BookGoogle bookGoogle = new BookGoogle();
+    String searchValue = "";
+    searchValue = StringFormat.removeDiacritics(value);
+    searchValue = searchValue.replaceAll(" ", "+");
+
+    String url =
+        '${Constants.URL_GOOGLE_BOOKS_API}?key=${Constants.API_KEY}&q=$searchValue&maxResults=40&orderBy=relevance';
+
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body);
+      bookGoogle = BookGoogle.fromJson(jsonResponse);
+
+      items.addAll(bookGoogle.items);
+      setState(() {});
+    } else {
+      print(response.statusCode);
+      print(response.body);
+
+    }
   }
 }

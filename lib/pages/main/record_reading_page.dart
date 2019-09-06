@@ -22,7 +22,6 @@ class _RecordReadingPageState extends State<RecordReadingPage>
   @override
   void initState() {
     super.initState();
-    print('initState');
     controller = AnimationController(
       vsync: this,
       duration: Duration(minutes: 60, seconds: 00),
@@ -77,7 +76,6 @@ class _RecordReadingPageState extends State<RecordReadingPage>
                           if (controller.isAnimating) {
                             controller.stop(canceled: true);
                             String saveStopTime = timerString;
-                            print(saveStopTime);
                           } else {
                             controller.repeat(reverse: false);
                           }
