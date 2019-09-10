@@ -24,6 +24,7 @@ class Items {
   VolumeInfo volumeInfo;
   SaleInfo saleInfo;
   SearchInfo searchInfo;
+  bool isSelected = false;
 
   Items(
       {this.kind,
@@ -32,7 +33,8 @@ class Items {
       this.selfLink,
       this.volumeInfo,
       this.saleInfo,
-      this.searchInfo});
+      this.searchInfo,
+      this.isSelected});
 
   static const fromJson = _$ItemsFromJson;
 

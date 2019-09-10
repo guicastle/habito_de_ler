@@ -1,12 +1,14 @@
+import 'dart:convert' as convert;
+
 import 'package:ant_icons/ant_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:habito_de_ler/application/constants.dart';
 import 'package:habito_de_ler/model/book_google.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
-import 'package:habito_de_ler/application/constants.dart';
 import 'package:habito_de_ler/utils/string_format.dart';
 import 'package:habito_de_ler/widget/card_tile_book.dart';
+import 'package:habito_de_ler/widget/shimmers/search_card_shimmer.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 
 class SearchBookPage extends StatefulWidget {
   @override
@@ -15,10 +17,42 @@ class SearchBookPage extends StatefulWidget {
 
 class _SearchBookPageState extends State<SearchBookPage> {
   List<Items> items = new List<Items>();
+  bool loading = false;
+
+  onElementSelected(int index) {
+    setState(
+          () {
+        items[index].isSelected = !items[index].isSelected;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
+    Widget body;
+
+    if (loading) {
+      body = ListView.builder(
+        itemCount: 20,
+        itemBuilder: (context, index) {
+          return SearchCardShimmer();
+        },
+      );
+    } else {
+      body = ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return CardSearchBook(
+            isSelected: items[index].isSelected,
+            index: index,
+            callback: () {
+              onElementSelected(index);
+            },
+            item: items[index],
+          );
+        },
+      );
+    }
 
     return Scaffold(
       body: Center(
@@ -29,9 +63,15 @@ class _SearchBookPageState extends State<SearchBookPage> {
               padding: EdgeInsets.only(left: 18, right: 18),
               child: TextField(
                 onSubmitted: (value) async {
+                  print('onSubmitted');
+                  setState(() {
+                    loading = true;
+                  });
                   items.clear();
                   await getBookGoogle(value);
-                  setState(() {});
+                  setState(() {
+                    loading = false;
+                  });
                 },
                 decoration: InputDecoration(
                   hintText: 'Busca o livro (Titulo/Author)',
@@ -40,22 +80,7 @@ class _SearchBookPageState extends State<SearchBookPage> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  String imageUrl =
-                      '${items[index].volumeInfo.imageLinks != null ? items[index].volumeInfo.imageLinks.thumbnail : 'https://historyexplorer.si.edu/sites/default/files/book-158.jpg'}';
-                  String title = '${items[index].volumeInfo.title}';
-                  String author =
-                      '${items[index].volumeInfo.authors != null ? items[index].volumeInfo.authors[0] : '-'}';
-                  int averageRating =
-                      items[index].volumeInfo.averageRating != null
-                          ? items[index].volumeInfo.averageRating.toInt()
-                          : 0;
-
-                  return buildCardTileBook(imageUrl, title, author, averageRating);
-                },
-              ),
+              child: body,
             ),
           ],
         ),
@@ -70,7 +95,8 @@ class _SearchBookPageState extends State<SearchBookPage> {
     searchValue = searchValue.replaceAll(" ", "+");
 
     String url =
-        '${Constants.URL_GOOGLE_BOOKS_API}?key=${Constants.API_KEY}&q=$searchValue&maxResults=40&orderBy=relevance';
+        '${Constants.URL_GOOGLE_BOOKS_API}?key=${Constants
+        .API_KEY}&q=$searchValue&maxResults=40&orderBy=relevance';
 
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -78,11 +104,13 @@ class _SearchBookPageState extends State<SearchBookPage> {
       bookGoogle = BookGoogle.fromJson(jsonResponse);
 
       items.addAll(bookGoogle.items);
-      setState(() {});
+
+      for (var item in items) {
+        item.isSelected = false;
+      }
     } else {
       print(response.statusCode);
       print(response.body);
-
     }
   }
 }
