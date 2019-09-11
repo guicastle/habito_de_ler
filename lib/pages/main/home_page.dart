@@ -1,8 +1,8 @@
-import 'package:ant_icons/ant_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:habito_de_ler/utils/colors.dart';
-import 'package:habito_de_ler/utils/space_utils.dart';
+import 'package:habito_de_ler/firebase/books_firebase.dart';
+import 'package:habito_de_ler/model/book.dart';
 
+import '../card_book_page.dart';
 import '../search_book_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,12 +11,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Book> books = [];
+  BooksFireBase _base = new BooksFireBase();
+
+  @override
+  void initState() {
+    super.initState();
+    loadBooks();
+  }
+
+  loadBooks() async {
+    books = await _base.getAllBooks();
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Widget> listCards = [];
+
+    if (books.length == 0) {
+
+    } else {
+      for (var book in books) {
+        var card = BuildCardBook(
+            book.imageUrl, book.title, book.authors, 100, book.pageCount);
+        listCards.add(card);
+      }
+    }
+
     return Scaffold(
+      appBar: AppBar(),
       body: Container(
-        child: Column(
-          children: <Widget>[],
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: listCards
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

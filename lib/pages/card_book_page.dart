@@ -3,26 +3,31 @@ import 'package:flutter/material.dart';
 class BuildCardBook extends StatelessWidget {
   final String picture;
   final String title;
-  final String author;
+  final List<String> authors;
   final int numPageCurrent;
   final int numPages;
 
-  BuildCardBook(this.picture, this.title, this.author, this.numPageCurrent,
+  BuildCardBook(this.picture, this.title, this.authors, this.numPageCurrent,
       this.numPages);
 
   @override
   Widget build(BuildContext context) {
-    /// width * 0.66 = 100%
     var width = MediaQuery.of(context).size.width;
 
+    /// width * 0.66 = 100%
     var _progress = (100 * numPageCurrent) / numPages;
     var percent = ((width * 0.66) * _progress) / 100;
+
+    String author = authors != null ? authors[0] : '';
+    if (authors.length > 0) {
+      for (int i = 0; i < authors.length - 1; i++) {
+        author = authors[i] + ',' + authors[i + 1];
+      }
+    }
 
     return Card(
       color: Colors.black26,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FadeInImage.assetNetwork(
             placeholder: '',
@@ -31,27 +36,16 @@ class BuildCardBook extends StatelessWidget {
             width: 95.0,
             height: 95.0,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 4,
-              ),
-              _getTitleBook(title),
-              SizedBox(
-                height: 4,
-              ),
-              _getAuthorBook(author),
-              SizedBox(
-                height: 32,
-              ),
-
-              /// Carregamento de progresso de leitura
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTile(
+                  title: _getTitleBook(title),
+                  subtitle: _getAuthorBook(author),
+                  contentPadding: EdgeInsets.all(4),
+                ),
                   Row(
                     children: <Widget>[
                       Container(
@@ -78,8 +72,7 @@ class BuildCardBook extends StatelessWidget {
                   ),
                 ],
               ),
-            ],
-          )
+          ),
         ],
       ),
     );
@@ -88,17 +81,17 @@ class BuildCardBook extends StatelessWidget {
   Widget _getTitleBook(String title) {
     return Text(
       title,
-      style: TextStyle(fontSize: 14),
-      overflow: TextOverflow.fade,
+      style: TextStyle(fontSize: 16),
+      overflow: TextOverflow.ellipsis,
       maxLines: 2,
-      softWrap: false,
+      softWrap: true,
     );
   }
 
   Widget _getAuthorBook(String author) {
     return Text(
       author,
-      style: TextStyle(color: Colors.grey, fontSize: 12),
+      style: TextStyle(color: Colors.grey, fontSize: 14),
     );
   }
 }

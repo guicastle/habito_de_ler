@@ -27,6 +27,12 @@ class FireStoreHandler {
     return querySnapshot;
   }
 
+  getAllSnapshots(String nameTable) {
+    return Firestore.instance
+        .collection(nameTable)
+        .snapshots();
+  }
+
   /// Retorna se o documento existe
   bool exists(String collectionPath, String documentID) =>
       collection(collectionPath).document().documentID == documentID;
