@@ -7,8 +7,7 @@ import 'package:habito_de_ler/application/constants.dart';
 import 'package:habito_de_ler/firebase/fire_store_handler.dart';
 import 'package:habito_de_ler/model/book.dart';
 import 'package:habito_de_ler/model/book_google.dart';
-import 'package:habito_de_ler/utils/space_utils.dart';
-import 'package:habito_de_ler/utils/string_format.dart';
+ import 'package:habito_de_ler/utils/string_format.dart';
 import 'package:habito_de_ler/widget/card_tile_book.dart';
 import 'package:habito_de_ler/widget/shimmers/search_card_shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -57,14 +56,42 @@ class _SearchBookPageState extends State<SearchBookPage> {
       );
     }
 
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(90.0)),
+      borderSide: BorderSide(
+        color: Colors.transparent,
+      ),
+    );
+
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            SpaceUtils.column(44),
-            Container(
-              padding: EdgeInsets.only(left: 18, right: 18),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            flex: 6,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                cursorColor: Colors.pinkAccent,
+                hintColor: Colors.transparent,
+              ),
               child: TextField(
+                decoration: InputDecoration(
+                  contentPadding: new EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 12),
+                  focusedBorder: border,
+                  border: border,
+                  prefixIcon: Icon(
+                    AntIcons.search_outline,
+                    color: Colors.white,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white10,
+                  hintText: 'Busca o livro (Titulo/Author)',
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
                 onSubmitted: (value) async {
                   setState(() {
                     loading = true;
@@ -75,12 +102,27 @@ class _SearchBookPageState extends State<SearchBookPage> {
                     loading = false;
                   });
                 },
-                decoration: InputDecoration(
-                  hintText: 'Busca o livro (Titulo/Author)',
-                  icon: Icon(AntIcons.search_outline),
-                ),
               ),
             ),
+          ),
+          Expanded(
+            flex: 1,
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 10,
+            height: 10,
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          children: <Widget>[
             Expanded(
               child: body,
             ),
@@ -111,14 +153,22 @@ class _SearchBookPageState extends State<SearchBookPage> {
       QuerySnapshot querySnapshot = await _base.getDocumentsSelect('books');
       List<Book> books = [];
       for (DocumentSnapshot doc in querySnapshot.documents) {
-        books.add(Book.fromJson(doc.data));
+        Book book = Book.fromJson(doc.data);
+        book.bookId = doc.documentID;
+        books.add(book);
       }
+
       for (var item in items) {
         var bookId = item.volumeInfo.title.replaceAll(" ", "_").toLowerCase();
-        var result = books.contains(bookId);
-        print(result);
-
-        item.isSelected = false;
+        bool alreadySelected = books
+            .where((i) => i.bookId == bookId)
+            .toList()
+            .length > 0 ? true : false;
+        if (alreadySelected) {
+          item.isSelected = true;
+        } else {
+          item.isSelected = false;
+        }
       }
     } else {
       print(response.statusCode);
