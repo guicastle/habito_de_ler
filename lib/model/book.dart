@@ -4,25 +4,27 @@ part 'book.g.dart';
 
 @JsonSerializable()
 class Book {
-  int bookId;
+  String bookId;
 
   String title;
 
-  String author;
-
-  String summary;
-
-  String genre;
-
-  int numPages;
-
-  int year;
-
-  String picture;
+  List<String> authors;
 
   String publisher;
 
-  String status;
+  String publishedDate;
+
+  String description;
+
+  int pageCount;
+
+  List<String> categories;
+
+  double averageRating;
+
+  String language;
+
+  String imageUrl;
 
   static const fromJson = _$BookFromJson;
 

@@ -24,7 +24,7 @@ class Items {
   VolumeInfo volumeInfo;
   SaleInfo saleInfo;
   SearchInfo searchInfo;
-  bool isSelected = false;
+  bool isSelected;
 
   Items(
       {this.kind,

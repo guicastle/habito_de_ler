@@ -1,8 +1,11 @@
 import 'dart:convert' as convert;
 
 import 'package:ant_icons/ant_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:habito_de_ler/application/constants.dart';
+import 'package:habito_de_ler/firebase/fire_store_handler.dart';
+import 'package:habito_de_ler/model/book.dart';
 import 'package:habito_de_ler/model/book_google.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
 import 'package:habito_de_ler/utils/string_format.dart';
@@ -21,7 +24,7 @@ class _SearchBookPageState extends State<SearchBookPage> {
 
   onElementSelected(int index) {
     setState(
-          () {
+      () {
         items[index].isSelected = !items[index].isSelected;
       },
     );
@@ -63,7 +66,6 @@ class _SearchBookPageState extends State<SearchBookPage> {
               padding: EdgeInsets.only(left: 18, right: 18),
               child: TextField(
                 onSubmitted: (value) async {
-                  print('onSubmitted');
                   setState(() {
                     loading = true;
                   });
@@ -95,8 +97,7 @@ class _SearchBookPageState extends State<SearchBookPage> {
     searchValue = searchValue.replaceAll(" ", "+");
 
     String url =
-        '${Constants.URL_GOOGLE_BOOKS_API}?key=${Constants
-        .API_KEY}&q=$searchValue&maxResults=40&orderBy=relevance';
+        '${Constants.URL_GOOGLE_BOOKS_API}?key=${Constants.API_KEY}&q=$searchValue&maxResults=40&orderBy=relevance';
 
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -105,7 +106,18 @@ class _SearchBookPageState extends State<SearchBookPage> {
 
       items.addAll(bookGoogle.items);
 
+      //List<Book> books = await _base.getDocuments<Book>('books', );
+      FireStoreHandler _base = new FireStoreHandler();
+      QuerySnapshot querySnapshot = await _base.getDocumentsSelect('books');
+      List<Book> books = [];
+      for (DocumentSnapshot doc in querySnapshot.documents) {
+        books.add(Book.fromJson(doc.data));
+      }
       for (var item in items) {
+        var bookId = item.volumeInfo.title.replaceAll(" ", "_").toLowerCase();
+        var result = books.contains(bookId);
+        print(result);
+
         item.isSelected = false;
       }
     } else {

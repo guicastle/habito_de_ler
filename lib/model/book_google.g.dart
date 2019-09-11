@@ -37,7 +37,8 @@ Items _$ItemsFromJson(Map<String, dynamic> json) {
           : SaleInfo.fromJson(json['saleInfo'] as Map<String, dynamic>),
       searchInfo: json['searchInfo'] == null
           ? null
-          : SearchInfo.fromJson(json['searchInfo'] as Map<String, dynamic>));
+          : SearchInfo.fromJson(json['searchInfo'] as Map<String, dynamic>),
+      isSelected: json['isSelected'] as bool);
 }
 
 Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
@@ -47,7 +48,8 @@ Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'selfLink': instance.selfLink,
       'volumeInfo': instance.volumeInfo,
       'saleInfo': instance.saleInfo,
-      'searchInfo': instance.searchInfo
+      'searchInfo': instance.searchInfo,
+      'isSelected': instance.isSelected
     };
 
 VolumeInfo _$VolumeInfoFromJson(Map<String, dynamic> json) {
@@ -61,7 +63,7 @@ VolumeInfo _$VolumeInfoFromJson(Map<String, dynamic> json) {
       printType: json['printType'] as String,
       categories:
           (json['categories'] as List)?.map((e) => e as String)?.toList(),
-      averageRating: json['averageRating'] as double,
+      averageRating: (json['averageRating'] as num)?.toDouble(),
       ratingsCount: json['ratingsCount'] as int,
       maturityRating: json['maturityRating'] as String,
       allowAnonLogging: json['allowAnonLogging'] as bool,
@@ -158,7 +160,7 @@ Map<String, dynamic> _$OffersToJson(Offers instance) => <String, dynamic>{
 
 ListPrice _$ListPriceFromJson(Map<String, dynamic> json) {
   return ListPrice(
-      amountInMicros: json['amountInMicros'] as double,
+      amountInMicros: (json['amountInMicros'] as num)?.toDouble(),
       currencyCode: json['currencyCode'] as String);
 }
 
@@ -169,7 +171,7 @@ Map<String, dynamic> _$ListPriceToJson(ListPrice instance) => <String, dynamic>{
 
 RetailPrice _$RetailPriceFromJson(Map<String, dynamic> json) {
   return RetailPrice(
-      amountInMicros: json['amountInMicros'] as double,
+      amountInMicros: (json['amountInMicros'] as num)?.toDouble(),
       currencyCode: json['currencyCode'] as String);
 }
 
