@@ -52,7 +52,7 @@ class _MainPageState extends State<MainPage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(AntIcons.book_outline),
-            title: Text('Lendo'),
+            title: Text('Livros'),
           ),
           BottomNavigationBarItem(
             icon: Icon(AntIcons.unordered_list),

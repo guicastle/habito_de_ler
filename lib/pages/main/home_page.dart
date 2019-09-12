@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:habito_de_ler/firebase/fire_store_handler.dart';
 import 'package:habito_de_ler/model/book.dart';
+import 'package:habito_de_ler/utils/space_utils.dart';
 
 import '../card_book_page.dart';
 import '../search_book_page.dart';
@@ -22,10 +23,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> listCards = [];
+    var width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
-
-    Book book = new Book();
     return Scaffold(
       appBar: AppBar(),
       body: StreamBuilder(
@@ -35,25 +37,74 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasData) {
             books.clear();
             for (DocumentSnapshot doc in snapshot.data.documents) {
+              Book book = new Book();
               book = Book.fromJson(doc.data);
               book.bookId = doc.documentID;
               books.add(book);
             }
           }
-          return Container(
-            child: ListView.builder(
-              itemCount: books.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BuildCardBook(books[index].imageUrl, books[index].title, books[index].authors, 100,
-                        books[index].pageCount)
+          return Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SpaceUtils.column(18),
+                    Container(
+                      width: width * 0.9,
+                      height: 124,
+                      color: Colors.black26,
+                      //child: ,
+                    ),
+                    SpaceUtils.column(18),
                   ],
-                );
-              },
-            ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  key: Key('listCards'),
+                  itemCount: books.length,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      direction: DismissDirection.endToStart,
+                      key: Key(books[index].bookId),
+                      onDismissed: (direction) async {
+                        var bookId = books[index].bookId;
+                        await _base.deleteData('books', bookId);
+                        setState(() {
+                          books.removeAt(index);
+                        });
+                        Scaffold.of(context)
+                            .showSnackBar(SnackBar(
+                            content: Text("${books[index].title} removido")));
+                      },
+                      background: Container(
+                        color: Colors.red[300],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.delete),
+                            SpaceUtils.row(24)
+                          ],
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BuildCardBook(
+                              books[index].imageUrl, books[index].title,
+                              books[index].authors, 46,
+                              books[index].pageCount)
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
