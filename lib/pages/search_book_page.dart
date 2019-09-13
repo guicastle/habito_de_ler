@@ -7,7 +7,7 @@ import 'package:habito_de_ler/application/constants.dart';
 import 'package:habito_de_ler/firebase/fire_store_handler.dart';
 import 'package:habito_de_ler/model/book.dart';
 import 'package:habito_de_ler/model/book_google.dart';
- import 'package:habito_de_ler/utils/string_format.dart';
+import 'package:habito_de_ler/utils/string_format.dart';
 import 'package:habito_de_ler/widget/card_tile_book.dart';
 import 'package:habito_de_ler/widget/shimmers/search_card_shimmer.dart';
 import 'package:http/http.dart' as http;
@@ -79,8 +79,8 @@ class _SearchBookPageState extends State<SearchBookPage> {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  contentPadding: new EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 12),
+                  contentPadding:
+                      new EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   focusedBorder: border,
                   border: border,
                   prefixIcon: Icon(
@@ -147,6 +147,8 @@ class _SearchBookPageState extends State<SearchBookPage> {
       bookGoogle = BookGoogle.fromJson(jsonResponse);
 
       items.addAll(bookGoogle.items);
+      items.removeWhere((r) =>
+          r.volumeInfo.averageRating == null || r.volumeInfo.authors == null);
 
       //List<Book> books = await _base.getDocuments<Book>('books', );
       FireStoreHandler _base = new FireStoreHandler();
@@ -160,10 +162,10 @@ class _SearchBookPageState extends State<SearchBookPage> {
 
       for (var item in items) {
         var bookId = item.volumeInfo.title.replaceAll(" ", "_").toLowerCase();
-        bool alreadySelected = books
-            .where((i) => i.bookId == bookId)
-            .toList()
-            .length > 0 ? true : false;
+        bool alreadySelected =
+            books.where((i) => i.bookId == bookId).toList().length > 0
+                ? true
+                : false;
         if (alreadySelected) {
           item.isSelected = true;
         } else {

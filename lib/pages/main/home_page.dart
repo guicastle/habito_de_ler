@@ -23,17 +23,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery
-        .of(context)
-        .size
-        .width;
-
     return Scaffold(
-      appBar: AppBar(),
       body: StreamBuilder(
         stream: _base.getAllSnapshots('books'),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             books.clear();
             for (DocumentSnapshot doc in snapshot.data.documents) {
@@ -45,22 +38,7 @@ class _HomePageState extends State<HomePage> {
           }
           return Column(
             children: <Widget>[
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SpaceUtils.column(18),
-                    Container(
-                      width: width * 0.9,
-                      height: 124,
-                      color: Colors.black26,
-                      //child: ,
-                    ),
-                    SpaceUtils.column(18),
-                  ],
-                ),
-              ),
+              SpaceUtils.column(24),
               Expanded(
                 child: ListView.builder(
                   key: Key('listCards'),
@@ -75,8 +53,7 @@ class _HomePageState extends State<HomePage> {
                         setState(() {
                           books.removeAt(index);
                         });
-                        Scaffold.of(context)
-                            .showSnackBar(SnackBar(
+                        Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text("${books[index].title} removido")));
                       },
                       background: Container(
@@ -94,10 +71,8 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BuildCardBook(
-                              books[index].imageUrl, books[index].title,
-                              books[index].authors, 46,
-                              books[index].pageCount)
+                          BuildCardBook(books[index].imageUrl, books[index].title,
+                              books[index].authors, 46, books[index].pageCount)
                         ],
                       ),
                     );
