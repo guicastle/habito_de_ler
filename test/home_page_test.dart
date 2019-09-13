@@ -31,6 +31,11 @@ void main() {
 
     // Pagina esperada
     expect(widgetSearchBookPage.toString(), 'SearchBookPage');
+
+    /// Inserir texto em textinput
+        /// Executar botão de pesquisar
+        /// Validar se a lista foi preenchida e status da chamada retorno 200 Success
+
   });
 
   testWidgets('Swipe remove item in HomePage', (WidgetTester tester) async {
