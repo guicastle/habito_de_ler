@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habito_de_ler/utils/colors.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
 
 class LoginPage extends StatefulWidget {
@@ -6,7 +7,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-enum FormType { login, forgetPassword }
+enum FormType { login, loginGoogle, forgetPassword }
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = new GlobalKey<FormState>();
@@ -76,18 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                       width: width,
                       child: Column(
                         children: <Widget>[
-                          SpaceUtils.column(24.0),
-                          Text(
-                            'Seja Bem-vindo',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.blueGrey[700],
-                                fontFamily: 'Sans Medium'),
-                          ),
-                          SpaceUtils.column(16.0),
+                          SpaceUtils.column(56),
                           Column(
-                            //children: emailAndPassword() + buttonsActions(),
+                            children: emailAndPassword() + buttonsActions(),
                           ),
                         ],
                       ),
@@ -102,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
+  // ignore: missing_return
   List<Widget> emailAndPassword() {
     if (_formType == FormType.login)
       return [
@@ -146,13 +138,14 @@ class _LoginPageState extends State<LoginPage> {
       ];
   }
 
+  // ignore: missing_return
   List<Widget> buttonsActions() {
     if (_loading)
       return [
         SizedBox(height: 32),
         CircularProgressIndicator(),
       ];
-    if (_formType == FormType.login)
+    if (_formType == FormType.login) {
       return [
         SizedBox(height: 16),
         FlatButton(
@@ -163,31 +156,48 @@ class _LoginPageState extends State<LoginPage> {
               fontFamily: 'Sans Medium',
             ),
           ),
-          onPressed: moveToForgetPassword,
+          //onPressed: moveToForgetPassword,
         ),
         SizedBox(height: 16),
         ButtonTheme(
-          minWidth: 250.0,
-          height: 50.0,
-          child: RaisedButton(
-            colorBrightness: Brightness.dark,
-            child: new Text(
-              'Entrar',
-              style: TextStyle(
-                fontSize: 18,
-                fontFamily: 'Sans Medium',
+          minWidth: 230.0,
+          height: 38.0,
+          child: Column(
+            children: <Widget>[
+              RaisedButton(
+                colorBrightness: Brightness.dark,
+                child: new Text(
+                  'Entrar',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Sans Medium',
+                  ),
+                ),
+                highlightElevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                color: accentColor,
+                onPressed: () {},
+                //onPressed: validateAndSubmit,
               ),
-            ),
-            highlightElevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            color: Theme.of(context).accentColor,
-            onPressed: validateAndSubmit,
+              SpaceUtils.column(96),
+              FlatButton(
+                child: Text(
+                  'Não tem cadastro? \nCadastre aqui',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Sans Medium',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                //onPressed: moveToForgetPassword,
+              ),
+            ],
           ),
-        )
+        ),
       ];
-    else if (_formType == FormType.forgetPassword)
+    } else if (_formType == FormType.forgetPassword) {
       return [
         SizedBox(height: 50),
         ButtonTheme(
@@ -207,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(30),
             ),
             color: Theme.of(context).accentColor,
-            onPressed: validateAndSubmit,
+            //onPressed: validateAndSubmit,
           ),
         ),
         SizedBox(height: 30),
@@ -218,10 +228,41 @@ class _LoginPageState extends State<LoginPage> {
               fontFamily: 'Sans Medium',
             ),
           ),
-          onPressed: moveToLogin,
+          //onPressed: moveToLogin,
         ),
       ];
+    }
   }
 
+  // ignore: unused_element
+  Widget _signInButton() {
+    return RaisedButton(
+      color: Colors.white,
+      splashColor: Colors.grey,
+      onPressed: () {},
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(image: AssetImage("images/google_logo.png"), height: 28.0,),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Faça login no Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
 }
