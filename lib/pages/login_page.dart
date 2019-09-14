@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:habito_de_ler/utils/colors.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
+
+import 'new_account_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -101,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
         new TextFormField(
           enabled: !_loading,
           validator: (value) =>
-          value.isEmpty ? 'Campo email obrigatório' : null,
+              value.isEmpty ? 'Campo email obrigatório' : null,
           onSaved: (value) => _email = value,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -113,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
         new TextFormField(
           enabled: !_loading,
           validator: (value) =>
-          value.isEmpty ? 'Campo senha obrigatório' : null,
+              value.isEmpty ? 'Campo senha obrigatório' : null,
           onSaved: (value) => _password = value,
           obscureText: true,
           decoration: InputDecoration(
@@ -128,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
           enabled: !_loading,
           keyboardType: TextInputType.emailAddress,
           validator: (value) =>
-          value.isEmpty ? 'Campo email obrigatório' : null,
+              value.isEmpty ? 'Campo email obrigatório' : null,
           onSaved: (value) => _email = value,
           decoration: InputDecoration(
             hintText: 'Email',
@@ -191,7 +193,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                //onPressed: moveToForgetPassword,
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AccountPage()));
+                },
               ),
             ],
           ),
@@ -233,36 +238,4 @@ class _LoginPageState extends State<LoginPage> {
       ];
     }
   }
-
-  // ignore: unused_element
-  Widget _signInButton() {
-    return RaisedButton(
-      color: Colors.white,
-      splashColor: Colors.grey,
-      onPressed: () {},
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(image: AssetImage("images/google_logo.png"), height: 28.0,),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Faça login no Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
 }

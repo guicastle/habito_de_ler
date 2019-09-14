@@ -1,0 +1,193 @@
+import 'package:ant_icons/ant_icons.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:habito_de_ler/firebase/fire_store_handler.dart';
+import 'package:habito_de_ler/model/user.dart';
+import 'package:habito_de_ler/utils/colors.dart';
+import 'package:habito_de_ler/utils/space_utils.dart';
+
+class AccountPage extends StatefulWidget {
+  @override
+  _AccountPageState createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  final formKey = GlobalKey<FormState>();
+
+  bool _loading = false;
+  TextEditingController _username;
+  TextEditingController _email;
+  TextEditingController _password;
+  TextEditingController _passwordConfirm;
+
+  @override
+  void initState() {
+    super.initState();
+    _username = new TextEditingController();
+    _email = new TextEditingController();
+    _password = new TextEditingController();
+    _passwordConfirm = new TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _username.dispose();
+    _email.dispose();
+    _password.dispose();
+    _passwordConfirm.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black26,
+      appBar: AppBar(
+        backgroundColor: Colors.black26,
+        elevation: 0,
+      ),
+      body: Container(
+        padding: EdgeInsets.only(left: 24, top: 10, right: 24),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Form(
+                key: formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        enabled: !_loading,
+                        validator: (value) =>
+                            value.isEmpty ? 'Campo email obrigatório' : null,
+                        controller: _username,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          hintText: 'Username',
+                          prefixIcon: Icon(AntIcons.user),
+                        ),
+                      ),
+                      SpaceUtils.column(30),
+                      TextFormField(
+                        enabled: !_loading,
+                        validator: (value) =>
+                            value.isEmpty ? 'Campo email obrigatório' : null,
+                        controller: _email,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Email',
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                      ),
+                      SpaceUtils.column(30),
+                      TextFormField(
+                        enabled: !_loading,
+                        validator: (value) =>
+                            value.isEmpty ? 'Campo senha obrigatório' : null,
+                        controller:  _password,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Senha',
+                          prefixIcon: Icon(Icons.lock_outline),
+                        ),
+                      ),
+                      SpaceUtils.column(30),
+                      TextFormField(
+                        enabled: !_loading,
+                        validator: (value) =>
+                            value.isEmpty ? 'Campo senha obrigatório' : null,
+                        controller: _passwordConfirm ,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Confirmar senha',
+                          prefixIcon: Icon(Icons.lock_outline),
+                        ),
+                      ),
+                      SpaceUtils.column(42),
+                      ButtonTheme(
+                        minWidth: 250.0,
+                        height: 40.0,
+                        child: RaisedButton(
+                          colorBrightness: Brightness.dark,
+                          child: new Text(
+                            'Cadastrar',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Sans Medium',
+                            ),
+                          ),
+                          highlightElevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          color: accentColor,
+                          onPressed: () async {
+                            if (_password.text != _passwordConfirm.text) {
+                              /// ALERTA SE A SENHA FOR DIFERENTE
+                              return;
+                            }
+
+                            print(_username.text);
+                            print(_email.text);
+                            print(_password.text);
+                            print(_passwordConfirm.text);
+
+                            FireStoreHandler _base = new FireStoreHandler();
+                            User user = new User()
+                              ..username = _username.text
+                              ..email = _email.text
+                              ..password = _password.text
+                              ..createDate = DateTime.now();
+
+                            await _base.setIdData(
+                                'users', user.toJson(), user.email);
+                          },
+                        ),
+                      ),
+                      SpaceUtils.column(42),
+                      _signInButton()
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ignore: unused_element
+  Widget _signInButton() {
+    return RaisedButton(
+      color: Colors.white,
+      splashColor: Colors.grey,
+      onPressed: () {},
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(
+              image: AssetImage("images/google_logo.png"),
+              height: 28.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Faça login no Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
