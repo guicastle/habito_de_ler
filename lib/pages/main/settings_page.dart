@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habito_de_ler/firebase/auth.dart';
 
 import '../login_page.dart';
 
@@ -54,6 +55,8 @@ class _SettingsPageState extends State<SettingsPage> {
           width: width,
           child: OutlineButton(
             onPressed: () {
+              Auth _auth = new Auth();
+              _auth.signOut();
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginPage()));
             },

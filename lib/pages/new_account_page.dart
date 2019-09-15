@@ -1,10 +1,14 @@
 import 'package:ant_icons/ant_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:habito_de_ler/firebase/auth.dart';
 import 'package:habito_de_ler/firebase/fire_store_handler.dart';
 import 'package:habito_de_ler/model/user.dart';
 import 'package:habito_de_ler/utils/colors.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
+
+import 'main_page.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -84,7 +88,7 @@ class _AccountPageState extends State<AccountPage> {
                         enabled: !_loading,
                         validator: (value) =>
                             value.isEmpty ? 'Campo senha obrigatório' : null,
-                        controller:  _password,
+                        controller: _password,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'Senha',
@@ -96,7 +100,7 @@ class _AccountPageState extends State<AccountPage> {
                         enabled: !_loading,
                         validator: (value) =>
                             value.isEmpty ? 'Campo senha obrigatório' : null,
-                        controller: _passwordConfirm ,
+                        controller: _passwordConfirm,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'Confirmar senha',
@@ -144,44 +148,8 @@ class _AccountPageState extends State<AccountPage> {
                           },
                         ),
                       ),
-                      SpaceUtils.column(42),
-                      _signInButton()
                     ],
                   ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ignore: unused_element
-  Widget _signInButton() {
-    return RaisedButton(
-      color: Colors.white,
-      splashColor: Colors.grey,
-      onPressed: () {},
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(
-              image: AssetImage("images/google_logo.png"),
-              height: 28.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Faça login no Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
                 ),
               ),
             )

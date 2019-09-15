@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:habito_de_ler/firebase/auth.dart';
 import 'package:habito_de_ler/utils/colors.dart';
 import 'package:habito_de_ler/utils/space_utils.dart';
 
+import 'main_page.dart';
 import 'new_account_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -111,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
             prefixIcon: Icon(Icons.person),
           ),
         ),
-        SizedBox(height: 30),
+        SpaceUtils.column(30),
         new TextFormField(
           enabled: !_loading,
           validator: (value) =>
@@ -144,12 +147,12 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> buttonsActions() {
     if (_loading)
       return [
-        SizedBox(height: 32),
+        SpaceUtils.column(32),
         CircularProgressIndicator(),
       ];
     if (_formType == FormType.login) {
       return [
-        SizedBox(height: 16),
+        SpaceUtils.column(16),
         FlatButton(
           child: new Text(
             'Esqueci minha senha',
@@ -160,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           //onPressed: moveToForgetPassword,
         ),
-        SizedBox(height: 16),
+        SpaceUtils.column(16),
         ButtonTheme(
           minWidth: 230.0,
           height: 38.0,
@@ -183,7 +186,9 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {},
                 //onPressed: validateAndSubmit,
               ),
-              SpaceUtils.column(96),
+              SpaceUtils.column(4),
+              _signInButton(),
+              SpaceUtils.column(56),
               FlatButton(
                 child: Text(
                   'Não tem cadastro? \nCadastre aqui',
@@ -204,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
       ];
     } else if (_formType == FormType.forgetPassword) {
       return [
-        SizedBox(height: 50),
+        SpaceUtils.column(50),
         ButtonTheme(
           minWidth: 250.0,
           height: 50.0,
@@ -225,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
             //onPressed: validateAndSubmit,
           ),
         ),
-        SizedBox(height: 30),
+        SpaceUtils.column(30),
         FlatButton(
           child: new Text(
             'Voltar',
@@ -237,5 +242,48 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ];
     }
+  }
+
+
+  // ignore: unused_element
+  Widget _signInButton() {
+    return RaisedButton(
+      color: Colors.white,
+      splashColor: Colors.grey,
+      onPressed: () {
+        Auth _auth = new Auth();
+        Future<FirebaseUser> response = _auth.googleSignIn();
+        response.then((user) {
+          if (user.uid != null) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
+          }
+        });
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(
+              image: AssetImage("images/google_logo.png"),
+              height: 28.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Faça login no Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
