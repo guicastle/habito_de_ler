@@ -130,21 +130,18 @@ class _AccountPageState extends State<AccountPage> {
                               /// ALERTA SE A SENHA FOR DIFERENTE
                               return;
                             }
-
-                            print(_username.text);
-                            print(_email.text);
-                            print(_password.text);
-                            print(_passwordConfirm.text);
-
-                            FireStoreHandler _base = new FireStoreHandler();
-                            User user = new User()
-                              ..username = _username.text
-                              ..email = _email.text
-                              ..password = _password.text
-                              ..createDate = DateTime.now();
-
-                            await _base.setIdData(
-                                'users', user.toJson(), user.email);
+                            Auth _auth = new Auth();
+                            await _auth
+                                .createUserWithEmailAndPassword(
+                                    _email.text, _password.text, _username.text)
+                                .then((isSave) {
+                              if (isSave) {
+                                _auth.signInWithEmailAndPassword(_email.text, _password.text);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
+                              } else {
+                                /// Erro em salvar
+                              }
+                            });
                           },
                         ),
                       ),

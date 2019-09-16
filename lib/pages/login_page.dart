@@ -169,25 +169,9 @@ class _LoginPageState extends State<LoginPage> {
           height: 38.0,
           child: Column(
             children: <Widget>[
-              RaisedButton(
-                colorBrightness: Brightness.dark,
-                child: new Text(
-                  'Entrar',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Sans Medium',
-                  ),
-                ),
-                highlightElevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                color: accentColor,
-                onPressed: () {},
-                //onPressed: validateAndSubmit,
-              ),
+              signInButton(),
               SpaceUtils.column(4),
-              _signInButton(),
+              _googleSignInButton(),
               SpaceUtils.column(56),
               FlatButton(
                 child: Text(
@@ -244,20 +228,52 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  signInButton() {
+    return RaisedButton(
+      colorBrightness: Brightness.dark,
+      child: new Text(
+        'Entrar',
+        style: TextStyle(
+          fontSize: 16,
+          fontFamily: 'Sans Medium',
+        ),
+      ),
+      highlightElevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      color: accentColor,
+      onPressed: () {
+        Auth _auth = new Auth();
+        Future<FirebaseUser> response =
+            _auth.signInWithEmailAndPassword(_email, _password);
+        response.then(
+          (user) {
+            if (user.uid != null) {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MainPage()));
+            }
+          },
+        );
+      }, //onPressed: validateAndSubmit,
+    );
+  }
 
-  // ignore: unused_element
-  Widget _signInButton() {
+  Widget _googleSignInButton() {
     return RaisedButton(
       color: Colors.white,
       splashColor: Colors.grey,
       onPressed: () {
         Auth _auth = new Auth();
         Future<FirebaseUser> response = _auth.googleSignIn();
-        response.then((user) {
-          if (user.uid != null) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
-          }
-        });
+        response.then(
+          (user) {
+            if (user.uid != null) {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MainPage()));
+            }
+          },
+        );
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,

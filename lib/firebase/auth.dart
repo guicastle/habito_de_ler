@@ -10,7 +10,8 @@ import 'package:rxdart/rxdart.dart';
 abstract class BaseAuth {
   Future<String> currentUser();
 
-  Future<String> signInWithEmailAndPassword(String email, String password);
+  Future<FirebaseUser> signInWithEmailAndPassword(
+      String email, String password);
 
   Future<FirebaseUser> googleSignIn();
 
@@ -22,35 +23,31 @@ class Auth implements BaseAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
-  Observable<FirebaseUser> user;
-  Observable<Map<String, dynamic>> profile;
-
   // ignore: close_sinks
   PublishSubject loading = PublishSubject();
 
-  Auth() {
-    user = Observable(_auth.onAuthStateChanged);
+  // ignore: missing_return
+  Future<bool> createUserWithEmailAndPassword(String email, String password, String username) async {
+    try {
+      FirebaseUser user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
 
-    profile = user.switchMap((FirebaseUser u) {
-      if (u != null) {
-        return _db
-            .collection('users')
-            .document(u.uid)
-            .snapshots()
-            .map((snap) => snap.data);
-      } else {
-        return Observable.just({});
-      }
-    });
+      updateUserData(user, username: username);
+
+      return user.uid != null ? true : false;
+    } on PlatformException catch (e) {
+      print('Code error: ${e.code}');
+    }
   }
 
   // ignore: missing_return
-  Future<String> signInWithEmailAndPassword(
+  Future<FirebaseUser> signInWithEmailAndPassword(
       String email, String password) async {
     try {
-      FirebaseUser user = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      return user.uid;
+      FirebaseUser user = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      return user;
     } on PlatformException catch (e) {
       print('Code error: ${e.code}');
     }
@@ -73,11 +70,11 @@ class Auth implements BaseAuth {
   }
 
   // ignore: missing_return
-  Future<void> updateUserData(FirebaseUser fireBaseUser) async {
+  Future<void> updateUserData(FirebaseUser fireBaseUser, {String username}) async {
     DocumentReference ref = _db.collection('users').document(fireBaseUser.uid);
 
     User user = new User()
-      ..username = fireBaseUser.displayName
+      ..username = fireBaseUser.displayName == null ?? username
       ..email = fireBaseUser.email
       ..booksFavorites = []
       ..booksReading = []
