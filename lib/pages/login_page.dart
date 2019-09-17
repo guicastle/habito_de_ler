@@ -244,6 +244,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
       color: accentColor,
       onPressed: () {
+        final form = formKey.currentState;
+        if (!form.validate()) return;
+
+        form.save();
+
         Auth _auth = new Auth();
         Future<FirebaseUser> response =
             _auth.signInWithEmailAndPassword(_email, _password);
