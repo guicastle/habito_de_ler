@@ -18,7 +18,7 @@ dependencies:
   cached_network_image: ^1.0.0
   shared_preferences: 0.5.2
   ant_icons: ^1.0.0
-  http: ^1.4.0
+  http: ^0.13.3
   shimmer: ^1.0.0
   rxdart: ^0.22.2
 
